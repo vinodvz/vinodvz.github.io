@@ -27,7 +27,6 @@
         // Everything looks good!
         checkSupportedDRM().then(()=> {
             initPlayer();
-        console.error('Browser not supported!');
      })
    }
 
@@ -68,7 +67,7 @@
 	player.load(uri).then(() => {
         	console.log('The video has now been loaded!');
 	}).catch((onerror) => {
-		 console.error('Load Manifest Error: ');
+		 console.error('Load Manifest Error');
       })
       player.configure(playerConfig);
     }
@@ -136,7 +135,6 @@ async function checkSupportedDRM() {
     }
 
     checkSupportedDRM().then(()=> {
-     checkBrowser();
      initPlayer();
     })
 
