@@ -18,6 +18,22 @@
     </div> 
   </body>
   <script>
+  function initApp() {
+    // Install built-in polyfills to patch browser incompatibilities.
+    shaka.polyfill.installAll();
+
+    // Check to see if the browser supports the basic APIs Shaka needs.
+     if (shaka.Player.isBrowserSupported()) {
+        // Everything looks good!
+        checkSupportedDRM().then(()=> {
+            initPlayer();
+         }
+      } else {
+        // This browser does not have the minimum set of APIs we need.
+        console.error('Browser not supported!');
+     }
+   }
+
     function initPlayer() {
       
       //URI of Manifests of Stream to play
@@ -60,7 +76,58 @@
       })
       player.configure(playerConfig);
     }
-    
+   
+// checks which DRM is supported by the browser
+async function checkSupportedDRM() {
+  const config = [
+    {
+      initDataTypes: ['cenc'],
+      audioCapabilities: [
+        {
+          contentType: 'audio/mp4;codecs="mp4a.40.2"',
+        },
+      ],
+      videoCapabilities: [
+        {
+          contentType: 'video/mp4;codecs="avc1.42E01E"',
+        },
+      ],
+    },
+  ];
+  const drm = {
+    Widevine: {
+      name: 'Widevine',
+      mediaKey: 'com.widevine.alpha',
+    },
+    PlayReady: {
+      name: 'PlayReady',
+      mediaKey: 'com.chromecast.playready',
+    },
+    FairPlay: {
+      name: 'FairPlay',
+      mediaKey: 'com.apple.fps.1_0',
+    },
+  };
+  let supportedDRMType = '';
+  for (const key in drm) {
+    try {
+      await navigator
+          .requestMediaKeySystemAccess(drm[key].mediaKey, config)
+          .then((mediaKeySystemAccess) => {
+            supportedDRMType = drm[key].name;
+            console.log(supportedDRMType + ' support ok');
+          })
+          .catch((e) => {
+            console.log(e);
+          });
+    } catch (e) {
+      console.log(e);
+    }
+    drmType = supportedDRMType;
+  }
+}
+
+
     function onErrorEvent(event) {
       // Extract the shaka.util.Error object from the event.
       onError(event.detail);
@@ -72,6 +139,6 @@
       console.error('Error code',error.code);
     }
 
-    document.addEventListener('DOMContentLoaded', initPlayer);
+    document.addEventListener('DOMContentLoaded', initApp);
   </script>
 </html>
