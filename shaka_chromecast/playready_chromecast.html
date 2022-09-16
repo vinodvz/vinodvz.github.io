@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>DASH Playback</title>
+    <!-- Load the Shaka Player library. -->
+    <script src="shaka-player.compiled.js"></script>
+  </head>
+  <body>
+    <div class = "box1"> 
+      <h1>ShakaPlayer DASH Playback (DRM: Playready)</h1>
+      <video id="video"
+           width="640" height="480"
+           crossorigin="anonymous"
+           controls autoplay>
+        Your browser does not support HTML5 video.
+      </video>
+    </div> 
+  </body>
+  <script>
+  
+   function initApp() {
+    // Install built-in polyfills to patch browser incompatibilities.
+    shaka.polyfill.installAll();
+
+    // Check to see if the browser supports the basic APIs Shaka needs.
+        // Everything looks good!
+        checkSupportedDRM().then(()=> {
+            initPlayer();
+     })
+   }
+
+    function initPlayer() {
+      
+      //URI of Manifests of Stream to play
+      var uri = 'https://profficialsite.origin.mediaservices.windows.net/c51358ea-9a5e-4322-8951-897d640fdfd7/tearsofsteel_4k.ism/manifest(format=mpd-time-csf)';
+      
+      // Install polyfills.
+
+      // Check to see if the browser supports the basic APIs Shaka needs.
+      if (!shaka.Player.isBrowserSupported()) {
+        // This browser does not have the minimum set of APIs we need.
+        console.error('Browser not supported!');
+      }
+
+      // Find the video element.
+      var video = document.getElementById('video');
+
+      // Construct a Player to wrap around it.
+      var player = new shaka.Player(video);
+
+      // Attach the player to the window so that it can be easily debugged.
+      window.player = player;
+
+      // Listen for errors from the Player.
+      player.addEventListener('error', onErrorEvent);
+      
+      //Configures DRM license server if necessary.
+      playerConfig = {
+        drm: {
+          servers: {
+              'com.microsoft.playready': 'https://test.playready.microsoft.com/service/rightsmanager.asmx?cfg=(persist:false,sl:150)'
+          }
+        }
+      };
+
+     player.load(uri).then(function() {
+        // This runs if the asynchronous load is successful.
+        console.log('The video has now been loaded!');
+      }).catch(onError);  // onError is executed if the asynchronous load fails.
+
+      player.configure(playerConfig);
+    }
+   
+// checks which DRM is supported by the browser
+async function checkSupportedDRM() {
+  const config = [
+    {
+      initDataTypes: ['cenc'],
+      audioCapabilities: [
+        {
+          contentType: 'audio/mp4;codecs="mp4a.40.2"',
+        },
+      ],
+      videoCapabilities: [
+        {
+          contentType: 'video/mp4;codecs="avc1.42E01E"',
+        },
+      ],
+    },
+  ];
+  const drm = {
+    Widevine: {
+      name: 'Widevine',
+      mediaKey: 'com.widevine.alpha',
+    },
+    PlayReady: {
+      name: 'PlayReady',
+      mediaKey: 'com.chromecast.playready',
+    },
+    FairPlay: {
+      name: 'FairPlay',
+      mediaKey: 'com.apple.fps.1_0',
+    },
+  };
+  let supportedDRMType = '';
+  for (const key in drm) {
+    try {
+      await navigator
+          .requestMediaKeySystemAccess(drm[key].mediaKey, config)
+          .then((mediaKeySystemAccess) => {
+            supportedDRMType = drm[key].name;
+            console.log(supportedDRMType + ' support ok');
+          })
+          .catch((e) => {
+            console.log(e);
+          });
+    } catch (e) {
+      console.log(e);
+    }
+    drmType = supportedDRMType;
+  }
+}
+
+
+    function onErrorEvent(event) {
+      // Extract the shaka.util.Error object from the event.
+      onError(event.detail);
+    }
+
+    function onError(error) {
+      console.error('Error code',error.code);
+    }
+
+    checkSupportedDRM().then(()=> {
+     initPlayer();
+    })
+
+    document.addEventListener('DOMContentLoaded', initApp);
+  </script>
+</html>
