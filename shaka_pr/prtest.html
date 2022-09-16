@@ -139,6 +139,11 @@ async function checkSupportedDRM() {
       console.error('Error code',error.code);
     }
 
+    checkSupportedDRM().then(()=> {
+     checkBrowser();
+     initPlayer();
+    })
+
     document.addEventListener('DOMContentLoaded', initApp);
   </script>
 </html>
