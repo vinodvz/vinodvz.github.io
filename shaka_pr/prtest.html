@@ -33,7 +33,7 @@
     function initPlayer() {
       
       //URI of Manifests of Stream to play
-      var uri = 'https://wvm.ezdrm.com/demo/dash/BigBuckBunny_320x180.mpd';
+      var uri = 'https://profficialsite.origin.mediaservices.windows.net/c51358ea-9a5e-4322-8951-897d640fdfd7/tearsofsteel_4k.ism/manifest(format=mpd-time-csf)';
       
       // Install polyfills.
 
@@ -59,7 +59,7 @@
       playerConfig = {
         drm: {
           servers: {
-              'com.chromecast.playready': 'https://playready.ezdrm.com/cency/preauth.aspx?pX=E0183F'
+              'com.chromecast.playready': 'https://test.playready.microsoft.com/service/rightsmanager.asmx?cfg=(persist:false,sl:150)'
           }
         }
       };
