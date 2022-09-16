@@ -64,11 +64,11 @@
         }
       };
 
-	player.load(uri).then(() => {
-        	console.log('The video has now been loaded!');
-	}).catch((onerror) => {
-		 console.log('Load Manifest Error');
-      })
+     player.load(uri).then(function() {
+        // This runs if the asynchronous load is successful.
+        console.log('The video has now been loaded!');
+      }).catch(onError);  // onError is executed if the asynchronous load fails.
+
       player.configure(playerConfig);
     }
    
@@ -129,8 +129,6 @@ async function checkSupportedDRM() {
     }
 
     function onError(error) {
-      // Log the error.
-//      console.error('Error code', 'error.code', 'object', error);
       console.error('Error code',error.code);
     }
 
