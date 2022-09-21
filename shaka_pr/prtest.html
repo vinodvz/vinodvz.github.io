@@ -63,6 +63,7 @@
           }
         }
       };
+     console.log('Calling player.load()');
 
      player.load(uri).then(function() {
         // This runs if the asynchronous load is successful.
@@ -123,10 +124,6 @@ async function checkSupportedDRM() {
     function onError(error) {
       console.error('Error code',error.code);
     }
-
-    checkSupportedDRM().then(()=> {
-     initPlayer();
-    })
 
     document.addEventListener('DOMContentLoaded', initApp);
   </script>
