@@ -90,18 +90,10 @@ async function checkSupportedDRM() {
     },
   ];
   const drm = {
-    Widevine: {
-      name: 'Widevine',
-      mediaKey: 'com.widevine.alpha',
-    },
     PlayReady: {
       name: 'PlayReady',
       mediaKey: 'com.chromecast.playready',
-    },
-    FairPlay: {
-      name: 'FairPlay',
-      mediaKey: 'com.apple.fps.1_0',
-    },
+    }
   };
   let supportedDRMType = '';
   for (const key in drm) {
