@@ -8,7 +8,7 @@
   </head>
   <body style="background-color:grey;">
     <div class = "box1"> 
-      <h1>ShakaPlayer DASH Playback (DRM: Playready) v4</h1>
+      <h1>ShakaPlayer DASH Playback (DRM: Playready) v5</h1>
       <video id="video"
            width="640" height="480"
            crossorigin="anonymous"
@@ -25,10 +25,10 @@
 
     // Check to see if the browser supports the basic APIs Shaka needs.
         // Everything looks good!
-//     checkSupportedDRM().then(()=> {
-//            initPlayer();
-//     })
-     initPlayer();
+     checkSupportedDRM().then(()=> {
+            initPlayer();
+     })
+//     initPlayer();
    }
 
     function initPlayer() {
@@ -75,48 +75,35 @@
       player.configure(playerConfig);
     }
    
-// checks which DRM is supported by the browser
-async function checkSupportedDRM() {
-  const config = [
-    {
-      initDataTypes: ['cenc'],
-      audioCapabilities: [
+    async function checkSupportedDRM() {
+      const config = [
         {
-          contentType: 'audio/mp4;codecs="mp4a.40.2"',
+          initDataTypes: ['cenc'],
+          audioCapabilities: [
+            {
+              contentType: 'audio/mp4;codecs="mp4a.40.2"',
+            },
+          ],
+          videoCapabilities: [
+            {
+              contentType: 'video/mp4;codecs="avc1.4d400c"',
+            },
+          ],
         },
-      ],
-      videoCapabilities: [
-        {
-          contentType: 'video/mp4;codecs="avc1.4d400c"',
-        },
-      ],
-    },
-  ];
-  const drm = {
-    PlayReady: {
-      name: 'PlayReady',
-      mediaKey: 'com.chromecast.playready',
-    }
-  };
-  let supportedDRMType = '';
-  for (const key in drm) {
-    try {
-      await navigator
-          .requestMediaKeySystemAccess(drm[key].mediaKey, config)
+      ];
+      try {
+        await navigator
+          .requestMediaKeySystemAccess('com.chromecast.playready', config)
           .then((mediaKeySystemAccess) => {
-            supportedDRMType = drm[key].name;
-            console.log(supportedDRMType + ' support ok');
+            console.log('com.chromecast.playready supported');
           })
           .catch((e) => {
             console.log(e);
           });
-    } catch (e) {
-      console.log(e);
+      } catch (e) {
+        console.log(e);
+      }
     }
-    drmType = supportedDRMType;
-  }
-}
-
 
     function onErrorEvent(event) {
       // Extract the shaka.util.Error object from the event.
