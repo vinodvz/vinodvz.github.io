@@ -8,7 +8,7 @@
   </head>
   <body style="background-color:grey;">
     <div class = "box1"> 
-      <h1>ShakaPlayer DASH Playback (DRM: Playready) v1</h1>
+      <h1>ShakaPlayer DASH Playback (DRM: Playready) v2</h1>
       <video id="video"
            width="640" height="480"
            crossorigin="anonymous"
@@ -58,8 +58,11 @@
       //Configures DRM license server if necessary.
       playerConfig = {
         drm: {
+          keySystemsMapping: {
+            'com.microsoft.playready': 'com.chromecast.playready',
+          },
           servers: {
-              'com.chromecast.playready': 'https://playready.ezdrm.com/cency/preauth.aspx?pX=E0183F'
+              'com.microsoft.playready': 'https://playready.ezdrm.com/cency/preauth.aspx?pX=E0183F'
           }
         }
       };
