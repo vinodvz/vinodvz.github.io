@@ -6,9 +6,9 @@
     <!-- Load the Shaka Player library. -->
     <script src="shaka-player.compiled.js"></script>
   </head>
-  <body>
+  <body style="background-color:grey;">
     <div class = "box1"> 
-      <h1>ShakaPlayer DASH Playback (DRM: Playready)</h1>
+      <h1>ShakaPlayer DASH Playback (DRM: Playready) v1</h1>
       <video id="video"
            width="640" height="480"
            crossorigin="anonymous"
@@ -35,7 +35,7 @@
       //URI of Manifests of Stream to play
       var uri = 'https://vinodvz.github.io/dash/BigBuckBunny_320x180.mpd';
       
-      // Install polyfills.
+      shaka.log.setLevel(shaka.log.Level.V2);
 
       // Check to see if the browser supports the basic APIs Shaka needs.
       if (!shaka.Player.isBrowserSupported()) {
