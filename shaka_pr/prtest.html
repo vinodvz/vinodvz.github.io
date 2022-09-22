@@ -7,8 +7,8 @@
     <script src="shaka-player.compiled.js"></script>
   </head>
   <body style="background-color:grey;">
-    <div class = "box1">
-      <h1>ShakaPlayer DASH Playback (DRM: Playready) v3</h1>
+    <div class = "box1"> 
+      <h1>ShakaPlayer DASH Playback (DRM: Playready) v4</h1>
       <video id="video"
            width="640" height="480"
            crossorigin="anonymous"
@@ -18,14 +18,24 @@
     </div> 
   </body>
   <script>
+  
+   function initApp() {
+    // Install built-in polyfills to patch browser incompatibilities.
+    shaka.polyfill.installAll();
+
+    // Check to see if the browser supports the basic APIs Shaka needs.
+        // Everything looks good!
+//     checkSupportedDRM().then(()=> {
+//            initPlayer();
+//     })
+     initPlayer();
+   }
+
     function initPlayer() {
       
       //URI of Manifests of Stream to play
       var uri = 'https://wvm.ezdrm.com/demo/dash/BigBuckBunny_320x180.mpd';
       
-      // Install polyfills.
-      shaka.polyfill.installAll();
-
       // Check to see if the browser supports the basic APIs Shaka needs.
       if (!shaka.Player.isBrowserSupported()) {
         // This browser does not have the minimum set of APIs we need.
@@ -45,36 +55,78 @@
       player.addEventListener('error', onErrorEvent);
       
       //Configures DRM license server if necessary.
-      player.configure({
-          drm: {
-            keySystemsMapping: {
-              'com.microsoft.playready': 'com.chromecast.playready',
-            },
-            servers: {
+      playerConfig = {
+        drm: {
+          keySystemsMapping: {
+            'com.microsoft.playready': 'com.chromecast.playready',
+          },
+          servers: {
               'com.microsoft.playready': 'https://playready.ezdrm.com/cency/preauth.aspx?pX=E0183F'
-            }
           }
-      });
+        }
+      };
+     console.log('Calling player.load()');
 
-      // Try to load a manifest.
-      // This is an asynchronous process.
-      player.load(uri).then(function() {
+     player.load(uri).then(function() {
         // This runs if the asynchronous load is successful.
         console.log('The video has now been loaded!');
       }).catch(onError);  // onError is executed if the asynchronous load fails.
 
+      player.configure(playerConfig);
     }
-    
+   
+// checks which DRM is supported by the browser
+async function checkSupportedDRM() {
+  const config = [
+    {
+      initDataTypes: ['cenc'],
+      audioCapabilities: [
+        {
+          contentType: 'audio/mp4;codecs="mp4a.40.2"',
+        },
+      ],
+      videoCapabilities: [
+        {
+          contentType: 'video/mp4;codecs="avc1.4d400c"',
+        },
+      ],
+    },
+  ];
+  const drm = {
+    PlayReady: {
+      name: 'PlayReady',
+      mediaKey: 'com.chromecast.playready',
+    }
+  };
+  let supportedDRMType = '';
+  for (const key in drm) {
+    try {
+      await navigator
+          .requestMediaKeySystemAccess(drm[key].mediaKey, config)
+          .then((mediaKeySystemAccess) => {
+            supportedDRMType = drm[key].name;
+            console.log(supportedDRMType + ' support ok');
+          })
+          .catch((e) => {
+            console.log(e);
+          });
+    } catch (e) {
+      console.log(e);
+    }
+    drmType = supportedDRMType;
+  }
+}
+
+
     function onErrorEvent(event) {
       // Extract the shaka.util.Error object from the event.
       onError(event.detail);
     }
 
     function onError(error) {
-      // Log the error.
-      console.error('Error code', error.code, 'object', error);
+      console.error('Error code',error.code);
     }
 
-    document.addEventListener('DOMContentLoaded', initPlayer);
+    document.addEventListener('DOMContentLoaded', initApp);
   </script>
 </html>
