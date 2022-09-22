@@ -7,7 +7,7 @@
     <script src="shaka-player.compiled.js"></script>
   </head>
   <body style="background-color:grey;">
-    <div class = "box1"> 
+    <div class = "box1">
       <h1>ShakaPlayer DASH Playback (DRM: Playready) v3</h1>
       <video id="video"
            width="640" height="480"
@@ -18,16 +18,14 @@
     </div> 
   </body>
   <script>
-
     function initPlayer() {
-
+      
       //URI of Manifests of Stream to play
-      var uri = 'https://vinodvz.github.io/dash/BigBuckBunny_320x180.mpd';
-
-      // Install built-in polyfills to patch browser incompatibilities.
+      var uri = 'https://wvm.ezdrm.com/demo/dash/BigBuckBunny_320x180.mpd';
+      
+      // Install polyfills.
       shaka.polyfill.installAll();
 
-      initPlayer();
       // Check to see if the browser supports the basic APIs Shaka needs.
       if (!shaka.Player.isBrowserSupported()) {
         // This browser does not have the minimum set of APIs we need.
@@ -47,35 +45,34 @@
       player.addEventListener('error', onErrorEvent);
       
       //Configures DRM license server if necessary.
-      playerConfig = {
-        drm: {
-          keySystemsMapping: {
-            'com.microsoft.playready': 'com.chromecast.playready',
-          },
-          servers: {
+      player.configure({
+          drm: {
+            keySystemsMapping: {
+              'com.microsoft.playready': 'com.chromecast.playready',
+            },
+            servers: {
               'com.microsoft.playready': 'https://playready.ezdrm.com/cency/preauth.aspx?pX=E0183F'
+            }
           }
-        }
-      };
-     console.log('Calling player.load');
+      });
 
-     player.load(uri).then(function() {
+      // Try to load a manifest.
+      // This is an asynchronous process.
+      player.load(uri).then(function() {
         // This runs if the asynchronous load is successful.
         console.log('The video has now been loaded!');
       }).catch(onError);  // onError is executed if the asynchronous load fails.
 
-     console.log('Calling player.configure');
-
-      player.configure(playerConfig);
     }
-
+    
     function onErrorEvent(event) {
       // Extract the shaka.util.Error object from the event.
       onError(event.detail);
     }
 
     function onError(error) {
-      console.error('Error code',error.code);
+      // Log the error.
+      console.error('Error code', error.code, 'object', error);
     }
 
     document.addEventListener('DOMContentLoaded', initPlayer);
