@@ -58,6 +58,9 @@
       //Configures DRM license server if necessary.
       playerConfig = {
         drm: {
+	   keySystemsMapping: {
+              'com.microsoft.playready': 'com.chromecast.playready',
+          },
           servers: {
               'com.microsoft.playready': 'https://test.playready.microsoft.com/service/rightsmanager.asmx?cfg=(persist:false,sl:150)'
           }
