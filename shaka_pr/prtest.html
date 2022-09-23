@@ -8,7 +8,7 @@
   </head>
   <body style="background-color:grey;">
     <div class = "box1"> 
-      <h1>ShakaPlayer DASH Playback (DRM: Playready) v8</h1>
+      <h1>ShakaPlayer DASH Playback (DRM: Playready) v9</h1>
       <video id="video"
            width="640" height="480"
            crossorigin="anonymous"
@@ -27,7 +27,6 @@
       // Install built-in polyfills to patch browser incompatibilities.
       shaka.polyfill.installAll();
 
-      initPlayer();
       // Check to see if the browser supports the basic APIs Shaka needs.
       if (!shaka.Player.isBrowserSupported()) {
         // This browser does not have the minimum set of APIs we need.
