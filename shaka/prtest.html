@@ -8,7 +8,7 @@
   </head>
   <body style="background-color:grey;">
     <div class = "box1"> 
-      <h1>ShakaPlayer DASH Playback (DRM: Playready) v10</h1>
+      <h1>ShakaPlayer DASH Playback (DRM: Playready) v1</h1>
       <video id="video"
            width="640" height="480"
            crossorigin="anonymous"
@@ -46,7 +46,7 @@
       player.addEventListener('error', onErrorEvent);
       
       //Configures DRM license server if necessary.
-      playerConfig = {
+      player.configure({
         drm: {
           keySystemsMapping: {
             'com.microsoft.playready': 'com.chromecast.playready',
@@ -55,17 +55,15 @@
               'com.microsoft.playready': 'https://playready.ezdrm.com/cency/preauth.aspx?pX=E0183F'
           }
         }
-      };
-     console.log('Calling player.load');
+      });
 
-     player.load(uri).then(function() {
+      // Try to load a manifest.
+      // This is an asynchronous process.
+      player.load(uri).then(function() {
         // This runs if the asynchronous load is successful.
         console.log('The video has now been loaded!');
       }).catch(onError);  // onError is executed if the asynchronous load fails.
 
-     console.log('Calling player.configure');
-
-      player.configure(playerConfig);
     }
 
     function onErrorEvent(event) {
@@ -74,7 +72,8 @@
     }
 
     function onError(error) {
-      console.error('Error code',error.code);
+      // Log the error.
+      console.error('Error code', error.code, 'object', error);
     }
 
     document.addEventListener('DOMContentLoaded', initPlayer);
